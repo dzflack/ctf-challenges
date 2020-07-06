@@ -1,0 +1,9 @@
+version: '3'
+
+services:
+  gitouttahere:
+    restart: always 
+    container_name: gitouttahere
+    build: gitouttahere
+    ports:
+      - 9000:443
