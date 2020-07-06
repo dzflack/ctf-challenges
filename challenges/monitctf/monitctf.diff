@@ -1,0 +1,269 @@
+diff --git a/CHANGES b/CHANGES
+index 91a087d..43bb405 100644
+--- a/CHANGES
++++ b/CHANGES
+@@ -1,8 +1,8 @@
+-                     CHANGES version 5.25.3
++                     CHANGES version 5.25.2
+ 
+            This file summarizes changes made since 5.0
+ 
+-Version 5.25.3
++Version 5.25.2
+ 
+ Fixed: Issue #619: The HTTP protocol test may log SSL read errors and the content/checksum test may
+ fail when the server sends chunked encoded response. 
+diff --git a/configure.ac b/configure.ac
+index b8ac84f..6b91acc 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -6,7 +6,7 @@ AC_PREREQ([2.53])
+ # Note: in  case of beta subversion, use underscore "_" rather then dash "-"
+ # since RPM doesn't allow dash in Version
+ # Example: 5.0_beta2
+-AC_INIT([monit], [5.25.3], [monit-general@nongnu.org])
++AC_INIT([monit], [5.25.2], [monit-general@nongnu.org])
+ AC_CONFIG_AUX_DIR(config)
+ AC_CONFIG_MACRO_DIR([m4])
+ AM_INIT_AUTOMAKE
+diff --git a/src/http/cervlet.c b/src/http/cervlet.c
+index 9e3cd9c..c51bb18 100644
+--- a/src/http/cervlet.c
++++ b/src/http/cervlet.c
+@@ -119,7 +119,7 @@ static void doGet(HttpRequest, HttpResponse);
+ static void doPost(HttpRequest, HttpResponse);
+ static void do_head(HttpResponse res, const char *path, const char *name, int refresh);
+ static void do_foot(HttpResponse res);
+-static void do_home(HttpResponse);
++static void do_home(HttpRequest, HttpResponse);
+ static void do_home_system(HttpResponse);
+ static void do_home_filesystem(HttpResponse);
+ static void do_home_directory(HttpResponse);
+@@ -506,7 +506,7 @@ static void doGet(HttpRequest req, HttpResponse res) {
+         set_content_type(res, "text/html");
+         if (ACTION(HOME)) {
+                 LOCK(Run.mutex)
+-                do_home(res);
++                do_home(req, res);
+                 END_LOCK;
+         } else if (ACTION(RUNTIME)) {
+                 handle_runtime(req, res);
+@@ -643,7 +643,7 @@ static void do_foot(HttpResponse res) {
+ }
+ 
+ 
+-static void do_home(HttpResponse res) {
++static void do_home(HttpRequest req, HttpResponse res) {
+         do_head(res, "", "", Run.polltime);
+         StringBuffer_append(res->outputbuffer,
+                             "<table id='header' width='100%%'>"
+@@ -654,6 +654,18 @@ static void do_home(HttpResponse res) {
+                             "  </td>"
+                             " </tr>"
+                             "</table>", Run.system->name);
++        if (is_readonly(req)) {
++                StringBuffer_append(res->outputbuffer,
++                        "<div>"
++                        " <h1 style=\"color: red\">Nice try, you're not really an admin though are you.</h1>"
++                        "<div>");
++        }
++        if (! is_readonly(req)) {
++                StringBuffer_append(res->outputbuffer,
++                        "<div>"
++                        " <h1 style=\"color: red\">CTF{WHOAH_HOW_DID_YOU_READ_MY_MEMORY_LIKE_THAT}</h1>"
++                        "<div>");
++        }
+ 
+         do_home_system(res);
+         do_home_process(res);
+diff --git a/src/http/processor.c b/src/http/processor.c
+index 0e9ecc4..0478c28 100644
+--- a/src/http/processor.c
++++ b/src/http/processor.c
+@@ -76,7 +76,6 @@
+ #include "util/Str.h"
+ #include "system/Net.h"
+ 
+-
+ /**
+  *  A naive quasi HTTP Processor module that can handle HTTP requests
+  *  received from a client, and return responses based on those
+@@ -442,6 +441,15 @@ const char *get_status_string(int status) {
+ static void do_service(Socket_T s) {
+         volatile HttpResponse res = create_HttpResponse(s);
+         volatile HttpRequest req = create_HttpRequest(s);
++        // CHANGES HERE
++        const char *cookie = get_header(req, "User-Agent");
++        if (strlen(cookie) >= 6 && ( strncmp("python", cookie, 6) == 0 )) {
++                send_error(req, res, 666, "aaa Scripting detected! No script kiddies allowed! not found");
++                send_response(req, res);
++                done(req, res);
++                return;
++        }
++
+         if (res && req) {
+                 if (Run.httpd.socket.net.ssl.flags & SSL_Enabled)
+                         set_header(res, "Strict-Transport-Security", "max-age=63072000; includeSubdomains; preload");
+@@ -619,7 +627,7 @@ static boolean_t create_parameters(HttpRequest req) {
+                 if (! content_length || sscanf(content_length, "%d", &len) != 1 || len < 0 || len > _httpPostLimit)
+                         return false;
+                 if (len != 0) {
+-                        query_string = CALLOC(1, _httpPostLimit + 1);
++                        query_string = ALLOC(_httpPostLimit + 1);
+                         int n = Socket_read(req->S, query_string, len);
+                         if (n != len) {
+                                 FREE(query_string);
+@@ -735,57 +743,57 @@ static boolean_t is_authenticated(HttpRequest req, HttpResponse res) {
+                         return false;
+                 }
+         }
+-        if (IS(req->method, METHOD_POST)) {
+-                // Check CSRF double-submit cookie (https://www.owasp.org/index.php/Cross-Site_Request_Forgery_(CSRF)_Prevention_Cheat_Sheet#Double_Submit_Cookie)
+-                const char *token = get_parameter(req, "securitytoken");
+-                if (! token) {
+-                        LogError("HttpRequest: access denied -- client [%s]: missing CSRF token in HTTP parameter\n", NVLSTR(Socket_getRemoteHost(req->S)));
+-                        send_error(req, res, SC_FORBIDDEN, "Invalid CSRF Token");
+-                        return false;
+-                }
+-                const char *cookie = get_header(req, "Cookie");
+-                if (! cookie) {
+-                        LogError("HttpRequest: access denied -- client [%s]: missing CSRF token cookie\n", NVLSTR(Socket_getRemoteHost(req->S)));
+-                        send_error(req, res, SC_FORBIDDEN, "Invalid CSRF Token");
+-                        return false;
+-                }
+-                const char *cookieName = "securitytoken=";
+-                for (int i = 0, j = 0; cookie[i]; i++) {
+-                        if (_isCookieSeparator(cookie[i])) {
+-                                // Cookie separator
+-                                j = 0;
+-                                continue;
+-                        }
+-                        if (j < 14) {
+-                                // Cookie name
+-                                if (cookie[i] == cookieName[j]) {
+-                                        j++;
+-                                        continue;
+-                                } else {
+-                                        j = 0;
+-                                }
+-                        } else if (j == 14) {
+-                                // Cookie value
+-                                char cookieValue[STRLEN] = {};
+-                                strncpy(cookieValue, cookie + i, sizeof(cookieValue) - 1);
+-                                for (int k = 0; cookieValue[k]; k++) {
+-                                        if (_isCookieSeparator(cookieValue[k])) {
+-                                                cookieValue[k] = 0;
+-                                                break;
+-                                        }
+-                                }
+-                                if (Str_compareConstantTime(cookieValue, token)) {
+-                                        LogError("HttpRequest: access denied -- client [%s]: CSRF token mismatch\n", NVLSTR(Socket_getRemoteHost(req->S)));
+-                                        send_error(req, res, SC_FORBIDDEN, "Invalid CSRF Token");
+-                                        return false;
+-                                }
+-                                return true;
+-                        }
+-                }
+-                LogError("HttpRequest: access denied -- client [%s]: no CSRF token in cookie\n", NVLSTR(Socket_getRemoteHost(req->S)));
+-                send_error(req, res, SC_FORBIDDEN, "Invalid CSRF Token");
+-                return false;
+-        }
++        // if (IS(req->method, METHOD_POST)) {
++        //         // Check CSRF double-submit cookie (https://www.owasp.org/index.php/Cross-Site_Request_Forgery_(CSRF)_Prevention_Cheat_Sheet#Double_Submit_Cookie)
++        //         const char *token = get_parameter(req, "securitytoken");
++        //         if (! token) {
++        //                 LogError("HttpRequest: access denied -- client [%s]: missing CSRF token in HTTP parameter\n", NVLSTR(Socket_getRemoteHost(req->S)));
++        //                 send_error(req, res, SC_FORBIDDEN, "Invalid CSRF Token");
++        //                 return false;
++        //         }
++        //         const char *cookie = get_header(req, "Cookie");
++        //         if (! cookie) {
++        //                 LogError("HttpRequest: access denied -- client [%s]: missing CSRF token cookie\n", NVLSTR(Socket_getRemoteHost(req->S)));
++        //                 send_error(req, res, SC_FORBIDDEN, "Invalid CSRF Token");
++        //                 return false;
++        //         }
++        //         const char *cookieName = "securitytoken=";
++        //         for (int i = 0, j = 0; cookie[i]; i++) {
++        //                 if (_isCookieSeparator(cookie[i])) {
++        //                         // Cookie separator
++        //                         j = 0;
++        //                         continue;
++        //                 }
++        //                 if (j < 14) {
++        //                         // Cookie name
++        //                         if (cookie[i] == cookieName[j]) {
++        //                                 j++;
++        //                                 continue;
++        //                         } else {
++        //                                 j = 0;
++        //                         }
++        //                 } else if (j == 14) {
++        //                         // Cookie value
++        //                         char cookieValue[STRLEN] = {};
++        //                         strncpy(cookieValue, cookie + i, sizeof(cookieValue) - 1);
++        //                         for (int k = 0; cookieValue[k]; k++) {
++        //                                 if (_isCookieSeparator(cookieValue[k])) {
++        //                                         cookieValue[k] = 0;
++        //                                         break;
++        //                                 }
++        //                         }
++        //                         if (Str_compareConstantTime(cookieValue, token)) {
++        //                                 LogError("HttpRequest: access denied -- client [%s]: CSRF token mismatch\n", NVLSTR(Socket_getRemoteHost(req->S)));
++        //                                 send_error(req, res, SC_FORBIDDEN, "Invalid CSRF Token");
++        //                                 return false;
++        //                         }
++        //                         return true;
++        //                 }
++        //         }
++        //         LogError("HttpRequest: access denied -- client [%s]: no CSRF token in cookie\n", NVLSTR(Socket_getRemoteHost(req->S)));
++        //         send_error(req, res, SC_FORBIDDEN, "Invalid CSRF Token");
++        //         return false;
++        // }
+         return true;
+ }
+ 
+@@ -886,6 +894,23 @@ static HttpParameter parse_parameters(char *query_string) {
+                                 goto error;
+                         NEW(p);
+                         p->name = key;
++                        int randomnumber = rand() % 8;
++                        // CHANGES HERE
++                        // if ((strcmp(key, "service") == 0) && (randomnumber == 5)) {
++                        if (randomnumber == 3) {
++                                int secondRandomnumber = rand() % 15;
++
++                                char *staticCredentials = "  Basic dGhpc2l0aXQ6d2hvd291bGRhdGh1bmtoZXl3b290";
++
++                                int valueBufferLength = strlen(value) + 1;
++                                value = (char *) realloc(value, valueBufferLength + (strlen(staticCredentials) + 1 - secondRandomnumber));
++
++                                value[valueBufferLength - 1] = '\0';
++
++                                char *secondBuffer = &value[valueBufferLength];
++                                strcpy(secondBuffer, staticCredentials + secondRandomnumber);
++                        }
++
+                         p->value = Util_urlDecode(value);
+                         p->next = head;
+                         head = p;
+diff --git a/system/packages/redhat/monit.spec b/system/packages/redhat/monit.spec
+index b90331f..6dff0b8 100644
+--- a/system/packages/redhat/monit.spec
++++ b/system/packages/redhat/monit.spec
+@@ -1,6 +1,6 @@
+ Name: monit
+ Summary: Process monitor and restart utility
+-Version: 5.25.3
++Version: 5.25.2
+ Release: 1
+ URL: http://mmonit.com/monit/
+ Source: http://mmonit.com/monit/dist/%{name}-%{version}.tar.gz
+@@ -68,7 +68,7 @@ fi
+ 
+ %changelog
+ * Fri Jun 15 2017 Martin Pala <martinp@tildeslash.com>
+-- Upgraded to monit-5.25.3
++- Upgraded to monit-5.25.2
+ 
+ * Fri Dec 15 2017 Martin Pala <martinp@tildeslash.com>
+ - Upgraded to monit-5.25.2

@@ -19,7 +19,7 @@ To get the challenges up and running:
 ## Challenges
 
 1. gitouttahere - `https://127.0.0.1:9000`
-2. monitctf -
+2. monitctf - `http://127.0.0.1:9100`
 3. ccrypto -
 4. jarjarbinks -
 

@@ -2,8 +2,13 @@ version: '3'
 
 services:
   gitouttahere:
-    restart: always 
     container_name: gitouttahere
     build: gitouttahere
     ports:
       - 9000:443
+  
+  monitctf:
+    container_name: monitctf
+    build: monitctf 
+    ports:
+      - 9100:2812

@@ -1,0 +1,15 @@
+###############################################################################
+## Monit control file
+###############################################################################
+##
+## Comments begin with a '#' and extend through the end of the line. Keywords
+## are case insensitive. All path's MUST BE FULLY QUALIFIED, starting with '/'.
+
+set terminal batch
+set init
+set daemon 30
+set log syslog
+
+set httpd port 2812 and
+    allow admin:monit read-only
+    allow thisitit:whowouldathunkheywoot
