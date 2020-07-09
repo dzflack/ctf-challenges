@@ -21,7 +21,7 @@ To get the challenges up and running:
 
 - gitouttahere `https://127.0.0.1:9000`
 - monitctf `http://127.0.0.1:9100`
-- ccrypto `http://127.0.0.1:9200`
+- cccrypto `http://127.0.0.1:9200`
 - jarjarbinks `http://127.0.0.1:9300`
 
 ## Solutions
