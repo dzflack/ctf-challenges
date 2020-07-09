@@ -12,3 +12,9 @@ services:
     build: monitctf 
     ports:
       - 9100:2812
+
+  cccrypto:
+    container_name: cccrypto
+    build: cccrypto 
+    ports:
+      - 9200:3100
