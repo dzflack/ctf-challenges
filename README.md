@@ -2,7 +2,7 @@
 
 This repo contains a collection of the CTF challenges I have written over the last couple years.
 
-Challenge files are in the `./challenges` folder, and their corresponding solutions in `./solutions`
+Challenge files are in the [challenges](challenges) folder, and their corresponding solutions in [solutions](solutions)
 
 ## Requirements
 
