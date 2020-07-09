@@ -12,9 +12,16 @@ services:
     build: monitctf 
     ports:
       - 9100:2812
+    restart: always
 
   cccrypto:
     container_name: cccrypto
     build: cccrypto 
     ports:
       - 9200:3100
+
+  jarjarbinks:
+    container_name: jarjarbinks
+    build: jarjarbinks 
+    ports:
+      - 9300:8080

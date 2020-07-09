@@ -6,22 +6,30 @@ Challenge files are in the `./challenges` folder, and their corresponding soluti
 
 ## Requirements
 
-All you need is docker and docker-compose
+- docker
+- docker-compose
 
 ## Start
 
 To get the challenges up and running:
 
-- Clone this repo `git clone https://github.com/dzflack/ctf-challenges`
-- Run docker compose `cd ctf-challenges/challenges && docker-compose up`
-- Navigate to the challenges as listed below
+1. Clone this repo `git clone https://github.com/dzflack/ctf-challenges`
+2. Run docker compose `cd ctf-challenges/challenges && docker-compose up`
+3. Navigate to the challenges as listed below
 
 ## Challenges
 
-1. gitouttahere - `https://127.0.0.1:9000`
-2. monitctf - `http://127.0.0.1:9100`
-3. ccrypto -
-4. jarjarbinks -
+- gitouttahere `https://127.0.0.1:9000`
+- monitctf `http://127.0.0.1:9100`
+- ccrypto `http://127.0.0.1:9200`
+- jarjarbinks `http://127.0.0.1:9300`
+
+## Solutions
+
+- [gitouttahere](solutions/gitouttahere/README.md)
+- [monitctf](solutions/monitctf/README.md)
+- [cccrypto](solutions/cccrypto/README.md)
+- [jarjarbinks](solutions/jarjarbinks/README.md)
 
 ## Flag Format
 
