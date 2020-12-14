@@ -25,3 +25,9 @@ services:
     build: jarjarbinks 
     ports:
       - 9300:8080
+
+  ggrf:
+    container_name: ggrf
+    build: ggrf
+    ports:
+      - 9400:8080

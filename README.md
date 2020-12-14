@@ -19,10 +19,36 @@ To get the challenges up and running:
 
 ## Challenges
 
-- gitouttahere `https://127.0.0.1:9000`
-- monitctf `http://127.0.0.1:9100`
-- cccrypto `http://127.0.0.1:9200`
-- jarjarbinks `http://127.0.0.1:9300`
+The challenge descriptions and their associated URLs are below
+### gitouttahere 
+
+Just another day in the land of poorly deployed websites. (basic web enumeration is required for this challenge, please don't DoS our server though).
+
+`https://127.0.0.1:9000`
+
+### monitctf 
+
+Here at ${insert_hip_and_cool_company} we use this nifty little application to monitor our processes. Can you please do the haxing of it?
+    
+`http://127.0.0.1:9100`
+
+### cccrypto 
+
+Can you decrypt the thing?
+
+`http://127.0.0.1:9200`
+
+### jarjarbinks 
+
+Please look at this new website, the Yeewinator
+
+`http://127.0.0.1:9300`
+
+### ggrf 
+
+Check out this crackin HTML5 web site. Our GRC team told us that they run a highly sensitive flag service on this server... 
+
+`http://127.0.0.1:9400`
 
 ## Solutions
 
@@ -30,6 +56,7 @@ To get the challenges up and running:
 - [monitctf](solutions/monitctf/README.md)
 - [cccrypto](solutions/cccrypto/README.md)
 - [jarjarbinks](solutions/jarjarbinks/README.md)
+- [ggrf](solutions/ggrf/README.md)
 
 ## Flag Format
 
