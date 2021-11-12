@@ -7,7 +7,7 @@ COPY ./docker-files/go.sum .
 
 RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-w -s" -a -o /go/bin/ggrf
 
-FROM alpine:3.12.1
+FROM alpine:3.12
 
 RUN apk add --update --no-cache \
     libgcc libstdc++ libx11 glib libxrender libxext libintl \
