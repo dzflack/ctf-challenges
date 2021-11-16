@@ -1,4 +1,4 @@
-FROM httpd:2.4.43-alpine
+FROM httpd:2.4.47-alpine
 
 ADD DPlayer.tar /usr/local/apache2/htdocs/
 COPY .htpasswd /usr/local/apache2/conf/.htpasswd
