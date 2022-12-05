@@ -1,0 +1,33 @@
+#!/bin/sh
+
+read user
+read pass
+
+if [[ "$user" != "www-data" ]] && [[ "$user" != "root" ]]; then
+  echo "not www-data or root"
+  exit 1
+fi
+
+SHADOWHASH=$(cat /etc/shadow | grep "$user" | cut -d":" -f 2)
+echo "shadowhash is $SHADOWHASH"
+
+actualsize=${#SHADOWHASH} 
+minimumsize=64
+if [[ "$actualsize" -lt "$minimumsize" ]]; then
+  echo "invalid hash"
+  exit 1
+fi
+
+SALT=$(cat /etc/shadow | grep "$user" | cut -d":" -f 2 | cut -d"$" -f 3)
+echo "SALT is $SALT"
+
+INPUTHASH=$(openssl passwd -6 -salt "$SALT" "$pass")
+echo "INPUTHASH is $INPUTHASH"
+
+if [[ "$INPUTHASH" == "$SHADOWHASH" ]]; then
+    echo "Password matches"
+    exit 0
+else
+    echo "Password does not match"
+    exit 1
+fi

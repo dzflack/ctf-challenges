@@ -37,3 +37,9 @@ services:
     build: obfuscatego
     ports:
       - 9500:80
+
+  badifi:
+    container_name: badifi
+    build: badifi
+    ports:
+      - 9600:80

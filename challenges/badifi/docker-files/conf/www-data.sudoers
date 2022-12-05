@@ -1,0 +1,4 @@
+www-data ALL=(root) NOPASSWD: /bin/cat
+www-data ALL=(root) NOPASSWD: /sbin/pwcheck
+www-data ALL=(root) NOPASSWD: /usr/local/sbin/php-fpm
+www-data ALL=(root) NOPASSWD: /sbin/asdf-systool
