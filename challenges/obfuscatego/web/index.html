@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>obfuscatego</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="scripts/bootstrap.min.css">
+    <script src="scripts/jquery-3.3.1.slim.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="scripts/popper.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="scripts/bootstrap.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="scripts/ace.js" type="text/javascript" charset="utf-8"></script>
+    <script src="scripts/theme-monokai.js" type="text/javascript" charset="utf-8"></script>
+    <script src="scripts/mode-javascript.js" type="text/javascript" charset="utf-8"></script>
+
+    <style>
+        #editor {
+            height: 600px;
+        }
+
+        #ciphertext {
+            position: absolute;
+            left: 22px;
+            outline: black;
+            outline-style: solid;
+            outline-width: medium;
+            outline-offset: 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>obfuscatego</h1>
+        <div class="row">
+            <div class="col-sm-4" id="wow">
+                <p>Oh No! This snippet of JavaScript, that was commissioned on Fiverr and is <b>mission critical</b> to our
+                    hugely profitable megacorp, has been inexplicably obfuscated somehow!!?!?</p>
+                <p>Please random internet person, can you somehow turn this obfuscation off and retrieve the secret
+                    sauce buried deep within?</p>
+                <br>
+                <div class="row" style="padding-top: 60px">
+                    <div class="col-sm-10">
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-8" id="htmPanel">
+                <div id="editor">function hi(){const _0x26b367=_0x2b46;console[_0x26b367(0x0)]('Hello\x20World!');const _0x435a24=_0x26b367(0x1);}function _0x2b46(_0x2f48a4,_0x2b4612){const _0xf8efdf=_0x2f48();_0x2b46=function(_0x379cb1,_0x1d89d2){_0x379cb1=_0x379cb1-0x0;let _0x5b11a9=_0xf8efdf[_0x379cb1];return _0x5b11a9;};return _0x2b46(_0x2f48a4,_0x2b4612);}function _0x2f48(){const _0x581d14=['log','\x43\x54\x46\x7b\x74\x68\x65\x5f\x6e\x61\x74\x69\x6f\x6e\x5f\x6e\x61\x79\x5f\x73\x74\x61\x74\x69\x6f\x6e\x5f\x6f\x66\x5f\x6f\x62\x66\x75\x73\x63\x61\x74\x69\x6f\x6e\x7d'];_0x2f48=function(){return _0x581d14;};return _0x2f48();}hi();</div>
+            </div>
+        </div>
+    </div>
+</body>
+<script>
+    var editor = ace.edit("editor");
+    editor.setTheme("ace/theme/monokai");
+    editor.session.setMode("ace/mode/javascript");
+    editor.session.setUseWrapMode(true);
+    editor.setShowPrintMargin(false);
+</script>
+
+</html>
