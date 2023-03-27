@@ -73,6 +73,14 @@ While trying to hax our brand new Yelsa Model 99, we've intercepted a firmware b
 
 Filedrop: [alpine-standard-3.16.2-aarch64.iso.bin](https://pub-6103938fe2954b398b3c27265496ccf4.r2.dev/alpine-standard-3.16.2-aarch64.iso.bin)
 
+### Cache em All
+
+We retrieved this Enterprise Application which seems to cache credentials. Can you retrieve the credentials of the application's last user?
+
+> NOTE - There is no interactive service for this chal. Filedrop is below
+
+Filedrop: [cache-credentials.zip](https://pub-6103938fe2954b398b3c27265496ccf4.r2.dev/cache-credentials.zip)
+
 ## Solutions
 
 - [gitouttahere](solutions/gitouttahere.md)
@@ -83,6 +91,7 @@ Filedrop: [alpine-standard-3.16.2-aarch64.iso.bin](https://pub-6103938fe2954b398
 - [ggrf](solutions/ggrf/README.md)
 - [badifi](solutions/badifi/README.md)
 - [zippitydoodah](solutions/zippitydoodah.md)
+- [cache-em-all](solutions/cache-em-all.md)
 
 ## Flag Format
 
