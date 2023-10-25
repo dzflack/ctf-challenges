@@ -6,7 +6,7 @@ COPY --chown=gradle:gradle *.gradle /home/gradle/src/
 WORKDIR /home/gradle/src
 RUN gradle build war
 
-FROM alpine:3.10.2
+FROM alpine:3.16.7
 
 COPY ./files/apache-tomcat-9.0.27.zip /tmp/apache-tomcat-9.0.27.zip
 
