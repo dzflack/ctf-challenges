@@ -1,4 +1,4 @@
-FROM alpine:3.12 as builder
+FROM alpine:3.16.7 as builder
 
 # Add build dependencies
 RUN apk add --update gcc musl-dev make libressl-dev file zlib-dev \
@@ -17,7 +17,7 @@ RUN git checkout 10e823422b6edfe4081cfb2042bda9a229682753 \
     --without-pam --without-ssl --without-largefiles \
     && make && make install
 
-FROM alpine:3.12
+FROM alpine:3.16.7
 
 ENV PATH=$PATH:/home/monit/bin \
     USER=monit
