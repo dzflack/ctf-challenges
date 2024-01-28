@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>CC Crypto</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="src/bootstrap.min.css" />
+    <script
+      src="src/jquery-3.3.1.slim.min.js"
+      type="text/javascript"
+      charset="utf-8"
+    ></script>
+    <script
+      src="src/popper.min.js"
+      type="text/javascript"
+      charset="utf-8"
+    ></script>
+    <script
+      src="src/bootstrap.min.js"
+      type="text/javascript"
+      charset="utf-8"
+    ></script>
+    <script src="src/ace.js" type="text/javascript" charset="utf-8"></script>
+    <script
+      src="src/theme-monokai.js"
+      type="text/javascript"
+      charset="utf-8"
+    ></script>
+    <script
+      src="src/mode-golang.js"
+      type="text/javascript"
+      charset="utf-8"
+    ></script>
+    <script src="src/wasm_exec.js"></script>
+    <script>
+      const go = new Go();
+      WebAssembly.instantiateStreaming(
+        fetch("src/main.wasm"),
+        go.importObject
+      ).then((result) => {
+        go.run(result.instance);
+		console.log("WASM loaded")
+      }).catch((err) => {
+		console.log("WASM failed to load")
+		console.error(err);
+	  })
+    </script>
+    <script>
+      function callSubmit(event) {
+		console.log("Called callSubmit()")
+        window.submit(event, function (result) {
+          alert(result);
+        });
+      }
+    </script>
+    <style>
+      #editor {
+        height: 530px;
+        width: 500px;
+      }
+
+      #ciphertext {
+        position: absolute;
+        left: 22px;
+        outline: black;
+        outline-style: solid;
+        outline-width: medium;
+        outline-offset: 5px;
+      }
+
+      .container {
+        margin-left: 0;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <h1>CC Crypto</h1>
+      <div class="row">
+        <div class="col-sm-6" id="wow">
+          <p>
+            We employ military grade crypto within our FinTech
+            TechBank4u&trade;.
+          </p>
+          <p>
+            To the right is pseudocode of the method we use to secure our
+            valuable Credit Card numbers.
+          </p>
+          <p>
+            Can you break our XstraSecure&copy; crypto and reveal the username +
+            credit card number of one of our customers, from the ciphertext
+            below:
+          </p>
+          <br />
+          <div class="row">
+            <div class="col-sm-12">
+              <b id="ciphertext">ODIOBqJDWHAtvLIv8Zk51WcfZFRKDxJ+</b>
+            </div>
+          </div>
+          <div class="row" style="padding-top: 60px">
+            <div class="col-sm-10">
+              <form onsubmit="event.preventDefault(); callSubmit(event);">
+                <div class="form-group">
+                  <label for="username">Username</label>
+                  <input
+                    type="username"
+                    name="username"
+                    class="form-control"
+                    id="exampleInputEmail1"
+                    style="width: auto"
+                    placeholder="Enter username"
+                  />
+                </div>
+                <div class="form-group">
+                  <label for="creditCardNumber">Credit Card Number</label>
+                  <input
+                    type="text"
+                    name="creditcardnumber"
+                    class="form-control"
+                    id="creditCardNumber"
+                    style="width: auto"
+                    placeholder="Enter Credit Card"
+                  />
+                </div>
+                <button type="submit" class="btn btn-outline-dark center-block">
+                  Submit
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+<div id="editor">func main() {
+
+	// Most recent user 
+	username = 999998
+	initialKey = "Jsg#kkdf*777" + string(username)
+	hash = md5(initialkey)
+	
+	// 2 key in the mode?
+	finalKey = hash + hash[:8]
+	iv = []byte{93, 3, 22, 99, 4, 82, 162, 34}
+	
+	des =  NewCBCTripleDESCipher(finalKey, IV, "pkcs5Padding")
+	cc = "4444 5555 6666 7777"
+	encrypted = base64.Encode(des.Encrypt(cc))
+	
+	if (encrypted == "cL/6j2RHMd95IN2C5vSVcXFu68kcxF4Q"){
+		Printf("successfully encrypted")
+	}
+}</div>
+        </div>
+      </div>
+    </div>
+  </body>
+  <script>
+    var editor = ace.edit("editor");
+    editor.setTheme("ace/theme/monokai");
+    editor.session.setMode("ace/mode/golang");
+    editor.setShowPrintMargin(false);
+  </script>
+</html>
