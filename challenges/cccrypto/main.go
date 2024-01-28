@@ -11,7 +11,7 @@ func submit(w http.ResponseWriter, r *http.Request) {
 	} else {
 		r.ParseForm()
 
-		if r.FormValue("username") == "796952" && r.FormValue("creditcardnumber") == "4971 9660 3200 7972" {
+		if r.FormValue("username") == "796952" && (r.FormValue("creditcardnumber") == "4971 9660 3200 7972" || r.FormValue("creditcardnumber") == "4971966032007972") {
 			log.Println("Correct flag submitted by: ", r.RemoteAddr)
 			w.Write([]byte("Flag: CTF{15f5d85dd1fe2c86a6d04f96328b16b3}"))
 		} else {

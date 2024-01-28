@@ -14,16 +14,22 @@
 
 	<style>
 		#editor {
-			height: 600px;
+			height: 530px;
+			width: 500px;
 		}
 
-		#ciphertext{
+		#ciphertext {
 			position: absolute;
 			left: 22px;
 			outline: black;
 			outline-style: solid;
 			outline-width: medium;
 			outline-offset: 5px;
+		}
+
+		.container {
+			margin-left: 0;
+
 		}
 	</style>
 </head>
@@ -32,7 +38,7 @@
 	<div class="container">
 		<h1>CC Crypto</h1>
 		<div class="row">
-			<div class="col-sm-4" id="wow">
+			<div class="col-sm-6" id="wow">
 				<p>We employ military grade crypto within our FinTech TechBank4u&trade;.</p>
 				<p>To the right is pseudocode of the method we use to secure our valuable Credit Card numbers.</p>
 				<p>Can you break our XstraSecure&copy; crypto and reveal the username + credit card number of one of our customers, from the ciphertext below:</p>
@@ -58,7 +64,7 @@
 					</div>
 				</div>	
 			</div>
-			<div class="col-sm-8" id="htmPanel">
+			<div class="col-sm-6" id="htmPanel">
 				<div id="editor">func main() {
 
 // Most recent user 
