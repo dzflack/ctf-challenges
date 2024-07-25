@@ -1,4 +1,5 @@
-FROM gradle:jdk11 as builder
+# Use a specific Gradle version
+FROM gradle:6.7.1-jdk11 as builder
 
 COPY --chown=gradle:gradle src /home/gradle/src/src
 COPY --chown=gradle:gradle *.gradle /home/gradle/src/
